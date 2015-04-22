@@ -1,0 +1,25 @@
+{
+  "name": "fathertime",
+  "version": "0.1.0",
+  "description": "A Slackbot that converts time to your local timezone",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dfarr/fathertime.git"
+  },
+  "keywords": [
+    "Slack"
+  ],
+  "author": "Chris Asche, David Farr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dfarr/fathertime/issues"
+  },
+  "homepage": "https://github.com/dfarr/fathertime",
+  "dependencies": {
+    "slack-client": "^1.4.0"
+  }
+}
