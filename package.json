@@ -2,8 +2,9 @@
   "name": "fathertime",
   "version": "0.1.0",
   "description": "A Slackbot that converts time to your local timezone",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "repository": {
