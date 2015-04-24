@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/dfarr/fathertime.svg?branch=master)](https://travis-ci.org/dfarr/fathertime)
+[![License](https://img.shields.io/dub/l/vibe-d.svg)](https://github.com/dfarr/fathertime/blob/master/LICENSE)
+
 # Fathertime
 
 A slack bot that converts time to your local timezone.
