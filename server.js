@@ -5,6 +5,14 @@ var slack = new Slack(token, true, true);
 var chrono = require('chrono-node');
 var m = require('moment');
 var tz = require('moment-timezone');
+var http = require('http');
+
+
+var server = http.createServer(function(req, res) {
+    res.end('Welcome to fathertime.');
+});
+
+server.listen(process.env.PORT || 5000);
 
 slack.on('message', function(message) {
     var user = slack.getUserByID(message.user);
