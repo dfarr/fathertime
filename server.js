@@ -14,13 +14,13 @@ slack.on('message', function(message) {
     if (results.length > 0 && message.type === 'message' && channel.name === 'bottesting') {
     	results.forEach(function(result) {
     		var start = m(result.start.date());
-    		channel.send(start.format('lll'));
-    		console.log(start.format('lll'));
+    		channel.send(start.format('MMMM Do YYYY, h:mm a ZZ'));
+    		console.log(start.format('MMMM Do YYYY, h:mm a ZZ'));
 
     		if (result.end) {
     			var end = m(result.end.date());
-    			channel.send(end.format('lll'));
-    			console.log(end.format('lll'));
+    			channel.send(end.format('MMMM Do YYYY, h:mm a ZZ'));
+    			console.log(end.format('MMMM Do YYYY, h:mm a ZZ'));
     		}
     	});
     }
