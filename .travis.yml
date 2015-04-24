@@ -1,0 +1,7 @@
+deploy:
+  provider: heroku
+  api_key:
+    secure: EMJmW+/2XqgaNJcFA7sIjUaTMOxIV4yX6DM6IzqfNgxjmgKJgFSKSt/6PBVQlTrN/twlHPaJ/txqIcshNiKSqnSanbAK4klusHuLz7R7WXSz/u8O7RxdkeBOgcLs6eJjN3iWdzBuS3Uq1BO/+OMTBpJjcHj5p1HlE5Fb3UFYCaY=
+  app: fathertime
+  on:
+    repo: dfarr/fathertime
