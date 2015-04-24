@@ -23,9 +23,13 @@ Basically:
 ``` 
 export SLACK_API_KEY= [your slack bot api key]
 
+# Credits
+
 ```
 <p align="center">
-  <img src="https://octodex.github.com/images/mountietocat.png" alt="Mountiecat" width="400" height="350">
+  <img src="https://octodex.github.com/images/mountietocat.png" alt="Mountiecat" width="50%" height="50%">
 </p>
 
 
+<p align="center">
+Made with :heart: by a couple crazy Canucks, [dfarr](https://github.com/dfarr) and [casche](https://github.com/casche)
