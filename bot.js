@@ -13,19 +13,19 @@ var slack = new Slack(token, true, true);
 
 module.exports.go = function() {
     slack.on('message', function(message) {
-        var userName = slack.getUserByID(message.user);
         var channel = slack.getChannelGroupOrDMByID(message.channel);
         var results = chrono.parse(message.text);
 
         if (results.length > 0 && message.type === 'message' && channel.name === 'bottesting') {
             results.forEach(function(result) {
-                var start = m(result.start.date());
-                var end = result.end ? m(result.end.date()) : undefined;
+                var author = slack.getUserByID(message.user);
+                var start = m.tz(result.start.date(), author.tz);
+                var end = result.end ? m.tz(result.end.date(), author.tz) : undefined;
 
                 channel.members.forEach(function (uuid) {
                     var user = slack.getUserByID(uuid);
                     if (user.is_bot === false) {
-                        var msg = user.name + ' ' + start.tz(user.tz).format(config.dateFormat) + (end ? 'to ' + end.tz(user.tz).format(config.dateFormat) : '');
+                        var msg = user.name + ' ' + start.clone().tz(user.tz).format(config.dateFormat) + (end ? 'to ' + end.clone().tz(user.tz).format(config.dateFormat) : '');
                         channel.send(msg, user.id);
                     }
                 });
