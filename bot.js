@@ -7,7 +7,8 @@ var slack = new Slack(token, true, true);
 var chrono = require('chrono-node');
 var m = require('moment');
 var tz = require('moment-timezone');
-var User = require('./app/models/user.model.js');
+var mongoose = require('mongoose')
+var User = mongoose.model('User');
 
 module.exports.go = function() {
     slack.on('message', function(message) {
@@ -17,15 +18,26 @@ module.exports.go = function() {
 
         if (channel.getType() === 'DM') { 
             channel.send('I heard you');
-            // User.findOne({uuid: message.user}, function(err, user) {
-            //     if (err) {
-            //         return;
-            //     }
 
-            //     if (!user.timezone) {
-            //         channel.send ('Please tell me what time zone you are currently in.');
-            //     }
-            // });
+            User.findOne({uuid: message.user}, function(err, user) {
+                 if (err) {
+                     return;
+                 }
+                 if (!user) {
+                    (new User({
+                        uuid: message.user
+                    })).save(function(err) {
+                        if (err) {
+                            // oh shit;
+                        }
+                    });
+                    return;
+                 } 
+
+                 if (user && !user.timezone) {
+                     channel.send ('Please tell me what time zone you are currently in.');
+                 }
+            });
         } else if (results.length > 0 && message.type === 'message' && channel.name === 'bottesting') {
             results.forEach(function(result) {
                 var start = m(result.start.date());
