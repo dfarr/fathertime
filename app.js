@@ -1,7 +1,6 @@
 var server = require('./server.js');
 var config = require('./config.js');
+var ft = require('./bot.js');
 
 server.go();
-
-var ft = require('./bot.js');
 ft.go();

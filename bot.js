@@ -2,10 +2,14 @@
 
 var config = require('./config.js');
 var Slack = require('slack-client');
-var token = config.slackApiKey;
-var slack = new Slack(token, true, true);
 var chrono = require('chrono-node');
 var m = require('moment-timezone');
+var token = config.slackApiKey;
+if (!token) { 
+    console.log('Failed to start. Did you set the environment variable SLACK_API_KEY ?');
+    process.exit(1);
+}
+var slack = new Slack(token, true, true);
 
 module.exports.go = function() {
     slack.on('message', function(message) {
