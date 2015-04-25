@@ -3,7 +3,7 @@
 
 # Fathertime
 
-A slack bot that converts time to your local timezone. Add Fathertime to your channel and watch all chat messages containing references to a time be converted automagically into your own timezone!
+A slack bot that converts time to your local timezone. 
 
 ## Usage
 
