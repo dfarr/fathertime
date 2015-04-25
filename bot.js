@@ -21,7 +21,8 @@ module.exports.go = function() {
                 channel.members.forEach(function (uuid) {
                     var user = slack.getUserByID(uuid);
                     if (user.is_bot === false) {
-                        channel.send(user.name + ' ' + start.tz(user.tz).format(config.dateFormat), user.id);
+                        var msg = user.name + ' ' + start.tz(user.tz).format(config.dateFormat) + (end ? 'to ' + end.tz(user.tz).format(config.dateFormat) : '');
+                        channel.send(msg, user.id);
                     }
                 });
             });
