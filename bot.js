@@ -23,6 +23,7 @@ module.exports.go = function() {
                 var start = m.tz(result.start.date(), author.tz);
                 var end = result.end ? m.tz(result.end.date(), author.tz) : undefined;
 
+                channel.send('loading: ' + result.start.date() + ' ' + author.tz);
                 channel.send('converting: ' + start.format(config.dateFormat));
 
                 channel.members.forEach(function (uuid) {
