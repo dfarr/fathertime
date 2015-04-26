@@ -23,6 +23,8 @@ module.exports.go = function() {
                 var start = m.tz(result.start.date(), author.tz);
                 var end = result.end ? m.tz(result.end.date(), author.tz) : undefined;
 
+                channel.send('converting: ' + start.format(config.dateFormat));
+
                 channel.members.forEach(function (uuid) {
                     var user = slack.getUserByID(uuid);
 
