@@ -16,6 +16,7 @@ var slack = new Slack(token, true, true);
 
 module.exports.go = function() {
     slack.on('message', function(message) {
+
         var user = slack.getUserByID(message.user);
         var channel = slack.getChannelGroupOrDMByID(message.channel);
         var results = chrono.parse(message.text);
@@ -23,13 +24,10 @@ module.exports.go = function() {
         if(results.length > 0 && message.type === 'message' && user.is_bot === false && channel.name === 'bottesting') {
             results.forEach(function(result) {
 
-                var author = slack.getUserByID(message.user);
-                var offset = moment.tz.zone(author.tz).parse(result.start.date().toISOString());
+                channel.send('converting 1: ' + result.start.date().toISOString());
 
-                channel.send('converting 1: ' + result.start.date().toISOString() + ' with offset: ' + offset);
-
-                var start = m.tz(moment(result.start.date().toISOString()).utcOffset(offset), author.tz);
-                var end = result.end ? m.tz(moment(result.end.date().toISOString()).utcOffset(offset), author.tz) : undefined;
+                var start = m.tz(result.start.date().toISOString(), user.tz);
+                var end = result.end ? m.tz(result.end.date().toISOString(), user.tz) : undefined;
 
                 channel.send('converting 2: ' + start.format(config.dateFormat));
 
