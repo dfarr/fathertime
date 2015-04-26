@@ -24,11 +24,12 @@ module.exports.go = function() {
             results.forEach(function(result) {
 
                 var author = slack.getUserByID(message.user);
+                var offset = moment.tz.zone(author.tz).parse(result.start.date().toISOString());
 
                 channel.send('converting 1: ' + result.start.date().toISOString());
 
-                var start = m.tz(result.start.date().toISOString(), 'UTC');
-                var end = result.end ? m.tz(result.end.date().toISOString(), 'UTC') : undefined;
+                var start = m.tz(moment(result.start.date().toISOString()).utcOffset(offset), author.tz);
+                var end = result.end ? m.tz(moment(result.end.date().toISOString()).utcOffset(offset), author.tz) : undefined;
 
                 channel.send('converting 2: ' + start.format(config.dateFormat));
 
