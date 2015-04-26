@@ -26,7 +26,7 @@ module.exports.go = function() {
                 var author = slack.getUserByID(message.user);
                 var offset = moment.tz.zone(author.tz).parse(result.start.date().toISOString());
 
-                channel.send('converting 1: ' + result.start.date().toISOString());
+                channel.send('converting 1: ' + result.start.date().toISOString() + ' with offset: ' + offset);
 
                 var start = m.tz(moment(result.start.date().toISOString()).utcOffset(offset), author.tz);
                 var end = result.end ? m.tz(moment(result.end.date().toISOString()).utcOffset(offset), author.tz) : undefined;
