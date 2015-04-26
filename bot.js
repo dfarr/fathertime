@@ -4,11 +4,14 @@ var config = require('./config.js');
 var Slack = require('slack-client');
 var chrono = require('chrono-node');
 var m = require('moment-timezone');
+var moment = require('moment');
 var token = config.slackApiKey;
+
 if (!token) { 
     console.log('Failed to start. Did you set the environment variable SLACK_API_KEY ?');
     process.exit(1);
 }
+
 var slack = new Slack(token, true, true);
 
 module.exports.go = function() {
@@ -19,12 +22,18 @@ module.exports.go = function() {
 
         if(results.length > 0 && message.type === 'message' && user.is_bot === false && channel.name === 'bottesting') {
             results.forEach(function(result) {
-                var author = slack.getUserByID(message.user);
-                var start = m.tz(result.start.date(), author.tz);
-                var end = result.end ? m.tz(result.end.date(), author.tz) : undefined;
 
-                channel.send('loading: ' + result.start.date() + ' ' + author.tz);
-                channel.send('converting: ' + start.format(config.dateFormat));
+                var author = slack.getUserByID(message.user);
+
+                var start = moment.utc(result.start.date().toISOString());
+                var end = result.end ? moment.utc(result.end.date().toISOString()) : undefined;
+
+                channel.send('converting 1: ' + start.format(config.dateFormat));
+
+                start = m.tz(start, author.tz);
+                end = end ? m.tz(end, author.tz) : undefined;
+
+                channel.send('converting 2: ' + start.format(config.dateFormat));
 
                 channel.members.forEach(function (uuid) {
                     var user = slack.getUserByID(uuid);
