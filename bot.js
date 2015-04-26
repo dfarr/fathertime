@@ -13,10 +13,11 @@ var slack = new Slack(token, true, true);
 
 module.exports.go = function() {
     slack.on('message', function(message) {
+        var user = slack.getUserByID(message.user);
         var channel = slack.getChannelGroupOrDMByID(message.channel);
         var results = chrono.parse(message.text);
 
-        if (results.length > 0 && message.type === 'message' && channel.name === 'bottesting') {
+        if(results.length > 0 && message.type === 'message' && user.is_bot === false && channel.name === 'bottesting') {
             results.forEach(function(result) {
                 var author = slack.getUserByID(message.user);
                 var start = m.tz(result.start.date(), author.tz);
@@ -24,8 +25,10 @@ module.exports.go = function() {
 
                 channel.members.forEach(function (uuid) {
                     var user = slack.getUserByID(uuid);
-                    if (user.is_bot === false) {
-                        var msg = user.name + ' ' + start.clone().tz(user.tz).format(config.dateFormat) + (end ? 'to ' + end.clone().tz(user.tz).format(config.dateFormat) : '');
+
+                    if(user.is_bot === false) {
+                        var msg = '(' + user.name + ', ' + user.tz + ') ';
+                        var msg = msg + start.clone().tz(user.tz).format(config.dateFormat) + (end ? 'to ' + end.clone().tz(user.tz).format(config.dateFormat) : '');
                         channel.send(msg, user.id);
                     }
                 });
