@@ -27,8 +27,8 @@ module.exports.go = function() {
 
                 channel.send('converting 1: ' + result.start.date().toISOString());
 
-                var start = m.tz(result.start.date().toISOString(), author.tz);
-                var end = result.end ? m.tz(result.end.date().toISOString(), author.tz) : undefined;
+                var start = m.tz(result.start.date().toISOString(), 'UTC');
+                var end = result.end ? m.tz(result.end.date().toISOString(), 'UTC') : undefined;
 
                 channel.send('converting 2: ' + start.format(config.dateFormat));
 
