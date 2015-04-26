@@ -25,10 +25,12 @@ module.exports.go = function() {
 
                 var author = slack.getUserByID(message.user);
 
+                channel.send('converting 1: ' + result.start.date().toISOString());
+
                 var start = m.tz(result.start.date().toISOString(), author.tz);
                 var end = result.end ? m.tz(result.end.date().toISOString(), author.tz) : undefined;
 
-                channel.send('converting: ' + start.format(config.dateFormat));
+                channel.send('converting 2: ' + start.format(config.dateFormat));
 
                 channel.members.forEach(function (uuid) {
                     var user = slack.getUserByID(uuid);
