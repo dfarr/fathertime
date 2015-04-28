@@ -24,12 +24,15 @@ module.exports.go = function() {
         if(results.length > 0 && message.type === 'message' && user.is_bot === false && channel.name === 'bottesting') {
             results.forEach(function(result) {
 
-                channel.send('converting 1: ' + result.start.date().toISOString());
+                var t = moment();
 
-                var start = m.tz(result.start.date().toISOString(), user.tz);
-                var end = result.end ? m.tz(result.end.date().toISOString(), user.tz) : undefined;
+                var diff = t.utcOffset() - m.tz(t, user.tz).utcOffset();
 
-                channel.send('converting 2: ' + start.format(config.dateFormat));
+                var start = new Date(result.start.date().getTime() + (diff * 60000));
+                var end = result.end ? new Date(result.end.date().getTime() + (diff * 60000)) : undefined;
+
+                start = m.tz(start.toISOString(), user.tz);
+                end = end ? m.tz(end.toISOString(), user.tz) : undefined;
 
                 channel.members.forEach(function (uuid) {
                     var user = slack.getUserByID(uuid);
