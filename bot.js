@@ -7,7 +7,7 @@ var m = require('moment-timezone');
 var moment = require('moment');
 var token = config.slackApiKey;
 
-if (!token) { 
+if (!token) {
     console.log('Failed to start. Did you set the environment variable SLACK_API_KEY ?');
     process.exit(1);
 }
@@ -39,7 +39,9 @@ module.exports.go = function() {
 
                     if(user.is_bot === false) {
                         var msg = '(' + user.name + ', ' + user.tz + ') ';
-                        var msg = msg + start.clone().tz(user.tz).format(config.dateFormat) + (end ? 'to ' + end.clone().tz(user.tz).format(config.dateFormat) : '');
+                        msg = msg + start.clone().tz(user.tz).format(config.dateFormat)
+                          + (end ? ' to ' + end.clone().tz(user.tz).format(config.dateFormat) : '');
+                        msg = message.text.replace(result.text, msg);
                         channel.send(msg, user.id);
                     }
                 });
