@@ -41,7 +41,12 @@ module.exports.go = function() {
             var msg = start.clone().tz(user.tz).format(config.dateFormat) + (end ? ' to ' + end.clone().tz(
               user.tz).format(config.dateFormat) : '');
             msg = message.text.replace(result.text, msg);
-            slack.getChannelGroupOrDMByName(user.name).send(msg, user.id);
+            var DM = slack.getChannelGroupOrDMByName(user.name);
+            if (DM) {
+              DM.send(msg, user.id);
+            } else {
+              console.log('Could not find channel, group or DM for user with name ' + user.name);
+            }
           }
         });
       });
