@@ -20,47 +20,13 @@ module.exports.go = function() {
     var channel = slack.getChannelGroupOrDMByID(message.channel);
     var results = chrono.parse(message.text);
 
-    if (message.text.indexOf('dig it') > -1) {
-      channel.send('I can dig it, ' + user.name);
-      return;
+    if (hasDigit(message)) {
+      return digit(channel, user);
     }
 
-    if (results.length > 0 && message.type === 'message' && user.is_bot === false) {
+    if (msgHasTimeStrings(results) && isValidMessage(message) && isHuman(user)) {
       results.forEach(function(result) {
-
-        var t = moment();
-
-        var diff = t.utcOffset() - m.tz(t, user.tz).utcOffset();
-
-        var start = new Date(result.start.date().getTime() + (diff * 60000));
-        var end = result.end ? new Date(result.end.date().getTime() + (diff * 60000)) : undefined;
-
-        start = m.tz(start.toISOString(), user.tz);
-        end = end ? m.tz(end.toISOString(), user.tz) : undefined;
-
-        var timeZones = {};
-
-        channel.members.forEach(function(uuid) {
-          var user = slack.getUserByID(uuid);
-          if (user.is_bot === false) {
-            if (!timeZones[user.tz]) {
-              timeZones[user.tz] = [];
-            }
-            timeZones[user.tz].push(user);
-          }
-        });
-
-        var msg = user.name + ': ' + message.text + '\n';
-        for (var z in timeZones) {
-          msg += start.clone().tz(z).format(config.dateFormat) + (end ? ' to ' + end.clone().tz(z).format(
-            config.dateFormat) : ' ');
-          msg += '(';
-          timeZones[z].forEach(function(user, i) {
-            msg += user.name;
-            msg += timeZones[z].length - 1 === i ? '' : ', ';
-          });
-          msg += ')' + '\n';
-        }
+        var msg = buildReplyMsg(channel, result, user);
         console.log(msg);
         channel.send(msg);
       });
@@ -68,3 +34,71 @@ module.exports.go = function() {
   });
   slack.login();
 };
+
+function buildReplyMsg(channel, result, user) {
+  var timeZones = getUniqueTz(channel);
+  var start = getBeginDate(result, user);
+  var end = getEndDate(result, user);
+  var msg = user.name + ': \'' + result.text + '\'\n';
+
+  for (var z in timeZones) {
+    msg += start.clone().tz(z).format(config.dateFormat) + (end ? ' to ' + end.clone().tz(z).format(
+      config.dateFormat) : ' ');
+    msg += '(';
+    timeZones[z].forEach(function(user, i) {
+      msg += user.name;
+      msg += timeZones[z].length - 1 === i ? '' : ', ';
+    });
+    msg += ')' + '\n';
+  }
+  return msg;
+}
+
+function getBeginDate(result, user) {
+  var start = new Date(result.start.date().getTime() + getTimeDiff(user));
+  return m.tz(start.toISOString(), user.tz);
+}
+
+function getEndDate(result, user) {
+  var end = result.end ? new Date(result.end.date().getTime() + getTimeDiff(user)) : undefined;
+  return end ? m.tz(end.toISOString(), user.tz) : undefined;
+}
+
+function getTimeDiff(user) {
+  var t = moment();
+  return (t.utcOffset() - m.tz(t, user.tz).utcOffset()) * 60000;
+}
+
+function getUniqueTz(channel) {
+  var timeZones = {};
+  channel.members.forEach(function(uuid) {
+    var user = slack.getUserByID(uuid);
+    if (isHuman(user)) {
+      if (!timeZones[user.tz]) {
+        timeZones[user.tz] = [];
+      }
+      timeZones[user.tz].push(user);
+    }
+  });
+  return timeZones;
+}
+
+function hasDigit(message) {
+  return message.text && message.text.indexOf('dig it') > -1;
+}
+
+function digit(channel, user) {
+  channel.send('I can dig it, ' + user.name);
+}
+
+function msgHasTimeStrings(results) {
+  return results.length > 0;
+}
+
+function isValidMessage(message) {
+  return message.type === 'message';
+}
+
+function isHuman(user) {
+  return user.is_bot === false;
+}
