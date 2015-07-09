@@ -16,10 +16,14 @@ var slack = new Slack(token, true, true);
 
 module.exports.go = function() {
   slack.on('message', function(message) {
-
     var user = slack.getUserByID(message.user);
     var channel = slack.getChannelGroupOrDMByID(message.channel);
     var results = chrono.parse(message.text);
+
+    if (message.text.indexOf('dig it') > -1) {
+      channel.send('I can dig it, ' + user.name);
+      return;
+    }
 
     if (results.length > 0 && message.type === 'message' && user.is_bot === false) {
       results.forEach(function(result) {
@@ -34,21 +38,31 @@ module.exports.go = function() {
         start = m.tz(start.toISOString(), user.tz);
         end = end ? m.tz(end.toISOString(), user.tz) : undefined;
 
+        var timeZones = {};
+
         channel.members.forEach(function(uuid) {
           var user = slack.getUserByID(uuid);
-
           if (user.is_bot === false) {
-            var msg = start.clone().tz(user.tz).format(config.dateFormat) + (end ? ' to ' + end.clone().tz(
-              user.tz).format(config.dateFormat) : '');
-            msg = message.text.replace(result.text, msg);
-            var DM = slack.getChannelGroupOrDMByName(user.name);
-            if (DM) {
-              DM.send(msg, user.id);
-            } else {
-              console.log('Could not find channel, group or DM for user with name ' + user.name);
+            if (!timeZones[user.tz]) {
+              timeZones[user.tz] = [];
             }
+            timeZones[user.tz].push(user);
           }
         });
+
+        var msg = user.name + ': ' + message.text + '\n';
+        for (var z in timeZones) {
+          msg += start.clone().tz(z).format(config.dateFormat) + (end ? ' to ' + end.clone().tz(z).format(
+            config.dateFormat) : ' ');
+          msg += '(';
+          timeZones[z].forEach(function(user, i) {
+            msg += user.name;
+            msg += timeZones[z].length - 1 === i ? '' : ', ';
+          });
+          msg += ')' + '\n';
+        }
+        console.log(msg);
+        channel.send(msg);
       });
     }
   });
